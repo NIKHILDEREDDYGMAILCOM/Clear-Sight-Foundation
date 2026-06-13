@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ClearSight — Myopia Awareness</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #112240;
+    --teal: #1a8f7a;
+    --teal-light: #22c5a8;
+    --teal-pale: #e0f7f3;
+    --cream: #faf8f4;
+    --warm-white: #ffffff;
+    --text-dark: #0e1e35;
+    --text-mid: #3d5166;
+    --text-muted: #7a8fa3;
+    --border: rgba(10,22,40,0.1);
+    --accent: #e8a040;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 4rem;
+    background: rgba(250,248,244,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--navy);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .nav-logo span { color: var(--teal); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--text-mid);
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--teal); }
+  .nav-cta {
+    background: var(--navy);
+    color: #fff !important;
+    padding: 0.5rem 1.4rem;
+    border-radius: 100px;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--teal) !important; color: #fff !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 8rem 4rem 4rem;
+    gap: 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(26,143,122,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 1.2rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.6rem, 5vw, 4.2rem);
+    line-height: 1.12;
+    color: var(--navy);
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--teal);
+  }
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--text-mid);
+    max-width: 440px;
+    margin-bottom: 2.5rem;
+    line-height: 1.8;
+  }
+  .btn-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--teal);
+    color: #fff;
+    padding: 0.85rem 2rem;
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: #157a68; transform: translateY(-2px); }
+  .btn-outline {
+    border: 1.5px solid var(--navy);
+    color: var(--navy);
+    padding: 0.85rem 2rem;
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+  .btn-outline:hover { background: var(--navy); color: #fff; }
+
+  /* HERO VISUAL */
+  .hero-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .eye-graphic {
+    width: 380px;
+    height: 380px;
+    position: relative;
+  }
+  .eye-bg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e0f7f3 0%, #d4f0ea 60%, #c5e8e0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .eye-bg::before {
+    content: '';
+    position: absolute;
+    inset: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(26,143,122,0.2);
+  }
+  .eye-svg { width: 220px; height: 220px; }
+  .stat-pill {
+    position: absolute;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--navy);
+    box-shadow: 0 4px 20px rgba(10,22,40,0.08);
+    white-space: nowrap;
+  }
+  .pill-1 { top: 10%; right: -8%; }
+  .pill-2 { bottom: 18%; left: -10%; }
+  .pill-3 { top: 55%; right: -12%; }
+
+  /* STATS BAND */
+  .stats-band {
+    background: var(--navy);
+    color: white;
+    padding: 4rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    text-align: center;
+  }
+  .stat-item {}
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--teal-light);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .stat-label {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.65);
+    max-width: 200px;
+    margin: 0 auto;
+  }
+
+  /* SECTION SHARED */
+  section { padding: 6rem 4rem; }
+  .section-eyebrow {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 3vw, 2.8rem);
+    color: var(--navy);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  .section-sub {
+    color: var(--text-mid);
+    max-width: 560px;
+    font-size: 1.02rem;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+  }
+
+  /* WHAT IS MYOPIA */
+  .what-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .what-cards { display: flex; flex-direction: column; gap: 1rem; }
+  .what-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem 1.8rem;
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .what-card:hover { box-shadow: 0 8px 32px rgba(10,22,40,0.08); transform: translateY(-2px); }
+  .what-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: var(--teal-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.3rem;
+  }
+  .what-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 0.3rem;
+  }
+  .what-card p { font-size: 0.9rem; color: var(--text-mid); line-height: 1.6; }
+
+  /* CAUSES */
+  .causes-section { background: var(--navy-mid); }
+  .causes-section .section-title { color: white; }
+  .causes-section .section-sub { color: rgba(255,255,255,0.6); }
+  .causes-section .section-eyebrow { color: var(--teal-light); }
+  .causes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .cause-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: background 0.2s;
+  }
+  .cause-card:hover { background: rgba(255,255,255,0.08); }
+  .cause-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--teal-light);
+    opacity: 0.4;
+    line-height: 1;
+    margin-bottom: 0.8rem;
+  }
+  .cause-card h3 { color: white; font-size: 1.05rem; margin-bottom: 0.6rem; }
+  .cause-card p { color: rgba(255,255,255,0.55); font-size: 0.9rem; line-height: 1.7; }
+
+  /* SYMPTOMS */
+  .symptoms-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+    margin-top: 2rem;
+  }
+  .symptom-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.5rem;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .symptom-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--teal);
+    flex-shrink: 0;
+  }
+  .symptom-row span { font-size: 0.95rem; color: var(--text-dark); font-weight: 500; }
+
+  /* PREVENTION */
+  .prevention-section { background: var(--teal-pale); }
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  .tip-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid rgba(26,143,122,0.15);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .tip-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(26,143,122,0.12); }
+  .tip-badge {
+    display: inline-block;
+    background: var(--teal-pale);
+    color: var(--teal);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0.25rem 0.8rem;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(26,143,122,0.2);
+  }
+  .tip-card h3 { font-size: 1.05rem; color: var(--navy); margin-bottom: 0.6rem; font-weight: 600; }
+  .tip-card p { font-size: 0.9rem; color: var(--text-mid); line-height: 1.7; }
+
+  /* TREATMENT */
+  .treatment-timeline {
+    position: relative;
+    padding-left: 3rem;
+    margin-top: 2rem;
+  }
+  .treatment-timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--teal), var(--teal-light), transparent);
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 2.5rem;
+  }
+  .tl-dot {
+    position: absolute;
+    left: -2.6rem;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--teal);
+    border: 3px solid var(--cream);
+  }
+  .tl-item h3 { font-size: 1.05rem; font-weight: 600; color: var(--navy); margin-bottom: 0.4rem; }
+  .tl-item p { font-size: 0.92rem; color: var(--text-mid); line-height: 1.7; }
+
+  /* ACTION */
+  .action-section {
+    background: var(--navy);
+    text-align: center;
+    padding: 6rem 4rem;
+  }
+  .action-section .section-eyebrow { color: var(--teal-light); }
+  .action-section .section-title { color: white; margin-bottom: 1rem; }
+  .action-section .section-sub { color: rgba(255,255,255,0.6); margin: 0 auto 2.5rem; }
+  .action-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+    text-align: left;
+  }
+  .action-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 1.8rem;
+    transition: background 0.2s;
+  }
+  .action-card:hover { background: rgba(255,255,255,0.1); }
+  .action-card h3 { color: white; font-size: 1rem; margin-bottom: 0.5rem; font-weight: 600; }
+  .action-card p { color: rgba(255,255,255,0.55); font-size: 0.88rem; line-height: 1.7; margin-bottom: 1.2rem; }
+  .action-link {
+    color: var(--teal-light);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .action-link::after { content: '→'; }
+  .action-link:hover { color: white; }
+
+  /* ABOUT / TEAM */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 5rem;
+    align-items: start;
+  }
+  .about-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--teal);
+    line-height: 1.5;
+    border-left: 3px solid var(--teal);
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+  }
+  .team-cards { display: flex; flex-direction: column; gap: 1rem; }
+  .team-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+  }
+  .team-avatar {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: var(--teal-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--teal);
+    flex-shrink: 0;
+  }
+  .team-card h4 { font-size: 0.95rem; font-weight: 600; color: var(--navy); margin-bottom: 0.2rem; }
+  .team-card p { font-size: 0.83rem; color: var(--text-muted); }
+
+  /* FOOTER */
+  footer {
+    background: var(--navy);
+    color: rgba(255,255,255,0.5);
+    padding: 3rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: white;
+    font-weight: 700;
+  }
+  .footer-logo span { color: var(--teal-light); }
+  footer p { max-width: 400px; }
+  .footer-links { display: flex; gap: 2rem; list-style: none; }
+  .footer-links a { color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: white; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-content > * {
+    animation: fadeUp 0.7s ease both;
+  }
+  .hero-content > *:nth-child(1) { animation-delay: 0.1s; }
+  .hero-content > *:nth-child(2) { animation-delay: 0.2s; }
+  .hero-content > *:nth-child(3) { animation-delay: 0.3s; }
+  .hero-content > *:nth-child(4) { animation-delay: 0.4s; }
+  .hero-visual { animation: fadeUp 0.9s ease 0.35s both; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 2rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 7rem 2rem 3rem; }
+    .hero-visual { display: none; }
+    .stats-band { grid-template-columns: 1fr; padding: 3rem 2rem; }
+    section { padding: 4rem 2rem; }
+    .what-grid, .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .causes-grid, .tips-grid, .action-cards { grid-template-columns: 1fr; }
+    .symptoms-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; padding: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Clear<span>Sight</span></div>
+  <ul class="nav-links">
+    <li><a href="#what">What is Myopia</a></li>
+    <li><a href="#causes">Causes</a></li>
+    <li><a href="#prevention">Prevention</a></li>
+    <li><a href="#treatment">Treatment</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#act" class="nav-cta">Take Action</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <p class="hero-eyebrow">Myopia Awareness Initiative</p>
+    <h1>The World Is Going <em>Out of Focus</em></h1>
+    <p class="hero-sub">
+      Myopia — nearsightedness — is one of the fastest-growing vision conditions worldwide. By 2050, half the global population may be affected. Learn the facts, spot the signs, and protect your vision.
+    </p>
+    <div class="btn-row">
+      <a href="#what" class="btn-primary">Learn the Facts</a>
+      <a href="#act" class="btn-outline">Get Involved</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="eye-graphic">
+      <div class="eye-bg">
+        <svg class="eye-svg" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="110" cy="110" rx="100" ry="62" stroke="#1a8f7a" stroke-width="2.5" fill="rgba(26,143,122,0.06)"/>
+          <circle cx="110" cy="110" r="38" fill="#1a8f7a" opacity="0.12"/>
+          <circle cx="110" cy="110" r="26" fill="#1a8f7a" opacity="0.25"/>
+          <circle cx="110" cy="110" r="14" fill="#0f6e56"/>
+          <circle cx="104" cy="104" r="4" fill="white" opacity="0.5"/>
+          <path d="M10 110 Q55 55 110 48 Q165 55 210 110" stroke="#1a8f7a" stroke-width="1.5" stroke-dasharray="4 3" fill="none" opacity="0.4"/>
+          <path d="M10 110 Q55 165 110 172 Q165 165 210 110" stroke="#1a8f7a" stroke-width="1.5" stroke-dasharray="4 3" fill="none" opacity="0.4"/>
+        </svg>
+      </div>
+      <div class="stat-pill pill-1">📊 30% rise in 10 years</div>
+      <div class="stat-pill pill-2">🌍 5B affected by 2050</div>
+      <div class="stat-pill pill-3">👁️ Most cases preventable</div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAND -->
+<div class="stats-band">
+  <div class="stat-item">
+    <div class="stat-num">50%</div>
+    <div class="stat-label">of the world's population projected to be myopic by 2050</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">5B</div>
+    <div class="stat-label">people affected globally within the next three decades</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">36%</div>
+    <div class="stat-label">increase in childhood myopia since the start of the digital era</div>
+  </div>
+</div>
+
+<!-- WHAT IS MYOPIA -->
+<section id="what">
+  <div class="what-grid">
+    <div>
+      <p class="section-eyebrow">The Basics</p>
+      <h2 class="section-title">What is Myopia?</h2>
+      <p class="section-sub">
+        Myopia, commonly called nearsightedness, is a refractive error that makes distant objects appear blurry while close objects remain clear. It occurs when the eyeball grows too long or the cornea curves too steeply.
+      </p>
+      <p style="color: var(--text-mid); font-size:0.95rem; line-height:1.8;">
+        Myopia typically begins in childhood and often progresses through the teenage years. While glasses and contact lenses correct vision, they don't stop its progression. High myopia increases the risk of serious eye disease later in life — including retinal detachment and glaucoma.
+      </p>
+    </div>
+    <div class="what-cards">
+      <div class="what-card">
+        <div class="what-icon">🔬</div>
+        <div>
+          <h3>Refractive Error</h3>
+          <p>Light focuses in front of the retina instead of directly on it, causing distant images to appear blurry.</p>
+        </div>
+      </div>
+      <div class="what-card">
+        <div class="what-icon">📏</div>
+        <div>
+          <h3>Axial Elongation</h3>
+          <p>The eye grows longer than normal — even 1mm of extra length can cause significant vision change.</p>
+        </div>
+      </div>
+      <div class="what-card">
+        <div class="what-icon">⚠️</div>
+        <div>
+          <h3>High Myopia Risk</h3>
+          <p>Prescriptions above –6.00 diopters significantly raise the risk of sight-threatening complications.</p>
+        </div>
+      </div>
+      <div class="what-card">
+        <div class="what-icon">📈</div>
+        <div>
+          <h3>Progressive Condition</h3>
+          <p>Myopia often worsens year after year during school age, making early intervention critical.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAUSES -->
+<section id="causes" class="causes-section">
+  <p class="section-eyebrow">Risk Factors</p>
+  <h2 class="section-title">What Causes Myopia?</h2>
+  <p class="section-sub">Myopia is influenced by both genetics and environment. The modern lifestyle — more screen time, less outdoor activity — has accelerated its rise dramatically.</p>
+  <div class="causes-grid">
+    <div class="cause-card">
+      <div class="cause-num">01</div>
+      <h3>Genetics</h3>
+      <p>If one parent has myopia, a child has a 3× greater risk. With both parents myopic, the risk rises to 6×. Over 200 genes have been linked to myopia.</p>
+    </div>
+    <div class="cause-card">
+      <div class="cause-num">02</div>
+      <h3>Near Work & Screens</h3>
+      <p>Extended time on phones, tablets, and computers — especially in poor lighting — forces the eyes into sustained close focus, stressing development.</p>
+    </div>
+    <div class="cause-card">
+      <div class="cause-num">03</div>
+      <h3>Lack of Outdoor Time</h3>
+      <p>Natural light stimulates dopamine release in the retina, which slows eye elongation. Children who spend less time outdoors are significantly more at risk.</p>
+    </div>
+    <div class="cause-card">
+      <div class="cause-num">04</div>
+      <h3>Urbanization</h3>
+      <p>Urban children have dramatically higher myopia rates than rural peers. Dense built environments limit natural light exposure and long-distance viewing.</p>
+    </div>
+    <div class="cause-card">
+      <div class="cause-num">05</div>
+      <h3>Educational Pressure</h3>
+      <p>Countries with intense academic cultures show higher rates. Countries like Singapore and South Korea see 80–90% myopia rates in young adults.</p>
+    </div>
+    <div class="cause-card">
+      <div class="cause-num">06</div>
+      <h3>Age of Onset</h3>
+      <p>Earlier onset (under age 7) is a strong predictor of high myopia by adulthood. Progression is fastest during school years.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SYMPTOMS -->
+<section id="symptoms">
+  <p class="section-eyebrow">Signs to Watch For</p>
+  <h2 class="section-title">Recognizing the Symptoms</h2>
+  <p class="section-sub">Many children don't realize their vision is abnormal — they've never seen any other way. Knowing the signs helps catch myopia early.</p>
+  <div class="symptoms-grid">
+    <div class="symptom-row"><div class="symptom-dot"></div><span>Squinting to see distant objects or the board at school</span></div>
+    <div class="symptom-row"><div class="symptom-dot"></div><span>Sitting closer to screens or the front of classrooms</span></div>
+    <div class="symptom-row"><div class="symptom-dot"></div><span>Frequent headaches or eye strain after class</span></div>
+    <div class="symptom-row"><div class="symptom-dot"></div><span>Rubbing eyes more than usual</span></div>
+    <div class="symptom-row"><div class="symptom-dot"></div><span>Difficulty seeing in low-light or at dusk</span></div>
+    <div class="symptom-row"><div class="symptom-dot"></div><span>Losing interest in activities that require distance vision</span></div>
+    <div class="symptom-row"><div class="symptom-dot"></div><span>Holding books and devices unusually close to the face</span></div>
+    <div class="symptom-row"><div class="symptom-dot"></div><span>Complaints of blurry vision when looking far away</span></div>
+  </div>
+</section>
+
+<!-- PREVENTION -->
+<section id="prevention" class="prevention-section">
+  <p class="section-eyebrow">What You Can Do</p>
+  <h2 class="section-title">Prevention & Management</h2>
+  <p class="section-sub">While genetics can't be changed, lifestyle choices profoundly affect whether and how severely myopia develops. Small daily habits make a real difference.</p>
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="tip-badge">Outdoor Time</div>
+      <h3>Spend 2 Hours Outside Daily</h3>
+      <p>Research consistently shows that at least 90–120 minutes of outdoor time per day can significantly slow or even prevent myopia onset in children. Natural light is the key factor.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-badge">Screen Habits</div>
+      <h3>Follow the 20-20-20 Rule</h3>
+      <p>Every 20 minutes of near work, look at something 20 feet away for 20 seconds. This gives your eye muscles a critical break and reduces strain-related progression risk.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-badge">Lighting</div>
+      <h3>Read in Good Lighting</h3>
+      <p>Poor lighting forces the eyes to work harder. Study and read in well-lit spaces — natural light is ideal. Avoid reading lying down or in dim environments.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-badge">Eye Exams</div>
+      <h3>Annual Comprehensive Eye Exams</h3>
+      <p>Children should have annual eye exams, especially if myopia is detected. Early intervention with myopia control treatments is most effective when started young.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-badge">Distance</div>
+      <h3>Maintain Proper Working Distance</h3>
+      <p>Hold books and devices at arm's length (at least 30cm/12 inches). Don't hunch over screens. Good posture and proper desk setup reduce near-work strain.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-badge">Diet</div>
+      <h3>Nutrition Matters</h3>
+      <p>A diet rich in Vitamin D (sunlight, fish, eggs) and antioxidants supports eye health. Some studies link low Vitamin D levels to higher myopia risk.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TREATMENT -->
+<section id="treatment">
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:start;">
+    <div>
+      <p class="section-eyebrow">Medical Options</p>
+      <h2 class="section-title">Treatment Approaches</h2>
+      <p class="section-sub">Beyond glasses and contacts, modern myopia control treatments can actively slow progression — the goal is not just clear vision today, but healthy eyes for life.</p>
+      <a href="https://www.google.com/search?q=eye+checkups+near+me&rlz=1C1UEAD_enUS1001US1001&oq=eye+checkups+near+me&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIICAEQABgWGB4yCAgCEAAYFhgeMggIAxAAGBYYHjIICAQQABgWGB4yCAgFEAAYFhgeMggIBhAAGBYYHjIICAcQABgWGB4yCAgIEAAYFhgeMggICRAAGBYYHtIBCTE3ODk4ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8" target="_blank" class="btn-primary" style="display:inline-block; margin-top:1rem;">Find an Eye Doctor</a>
+    </div>
+    <div class="treatment-timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <h3>Eyeglasses & Contact Lenses</h3>
+        <p>Standard correction for daily clear vision. Single-vision lenses correct the prescription but don't slow progression. Bifocal or progressive lenses may offer modest control.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <h3>Orthokeratology (Ortho-K)</h3>
+        <p>Specially designed rigid lenses worn overnight temporarily reshape the cornea, providing clear daytime vision without glasses while also slowing axial elongation significantly.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <h3>Atropine Eye Drops</h3>
+        <p>Low-dose atropine drops (0.01–0.05%) are clinically proven to slow myopia progression by up to 50% with minimal side effects. Applied nightly under medical supervision.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <h3>Multifocal Contact Lenses</h3>
+        <p>Designed to reduce peripheral retinal defocus that drives eye elongation. FDA-approved myopia control soft lenses show significant slowing effect in clinical trials.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <h3>LASIK / Refractive Surgery</h3>
+        <p>Permanent surgical correction for adults (18+) with stable prescriptions. Corrects vision but does not reduce underlying risk for myopia-related complications in high myopia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAKE ACTION -->
+<section id="act" class="action-section">
+  <p class="section-eyebrow">Get Involved</p>
+  <h2 class="section-title" style="text-align:center;">Every Action Matters</h2>
+  <p class="section-sub" style="text-align:center;">Raising awareness is the first step. Here are meaningful ways to make an impact in your school and community.</p>
+  <div class="action-cards">
+    <div class="action-card">
+      <h3>🎓 Educate Your School</h3>
+      <p>Organize an awareness week, host a presentation, or put up posters in hallways and classrooms. Help students and teachers understand the risks and prevention strategies.</p>
+      <a href="ClearSight_Foundation_Parent_Brochure.docx" class="action-link" download="Myopia_Brochure.docx">Download resources</a>
+    </div>
+    <div class="action-card">
+      <h3>🧑‍⚕️ Host a Vision Screening</h3>
+      <p>Partner with a local optometrist or health organization to offer free vision screenings at your school. Many students don't know they need glasses until they're tested.</p>
+      <a href="https://visiontolearn.org/our-work/how-vision-to-learn-works/" target="_blank" class="action-link">Learn how to organize</a>
+    </div>
+    <div class="action-card">
+      <h3>📣 Spread the Word</h3>
+      <p>Share facts about myopia on social media, in newsletters, or at community events. Use the hashtag #ClearSightAwareness to join the global conversation.</p>
+      <a href="https://www.instagram.com/officialvision2020myopia/" class="action-link" target="_blank">Visit Our Instagram</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div>
+      <p class="section-eyebrow">About This Project</p>
+      <h2 class="section-title">Why We Started This</h2>
+      <p style="color:var(--text-mid); line-height:1.8; margin-bottom:1rem; font-size:0.97rem;">
+        This website is a high school passion project dedicated to spreading awareness about the growing myopia epidemic. After noticing how many of our classmates needed glasses — and how few understood why or what to do about it — we decided to do something.
+      </p>
+      <p style="color:var(--text-mid); line-height:1.8; font-size:0.97rem;">
+        We believe that access to clear, evidence-based information can change outcomes. Vision affects academic performance, mental health, and quality of life — yet myopia is still widely misunderstood as a simple inconvenience rather than a manageable health issue.
+      </p>
+      <div class="about-quote">
+        "The eye is the lamp of the body. Good vision isn't a given — it's something we protect together."
+      </div>
+      <p style="color:var(--text-muted); font-size:0.85rem;">This is a student-led awareness project. For medical advice, please consult a licensed eye care professional.</p>
+    </div>
+    <div>
+      <h3 style="font-size:1rem; font-weight:600; color:var(--navy); margin-bottom:1.2rem;">The Team Behind ClearSight</h3>
+      <div class="team-cards">
+        <div class="team-card">
+          <div class="team-avatar">AD</div>
+          <div>
+            <h4>Anwita Dereddy</h4>
+            <p>Project Lead · Grade 11 · Lake Highland Preparatory School</p>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">ND</div>
+          <div>
+            <h4>Nikhil Dereddy</h4>
+            <p>Research & Content · Grade 9 · Orlando Science High School</p>
+          </div>
+      </div>
+      <div style="margin-top:1.5rem; padding:1.2rem 1.5rem; background:var(--teal-pale); border-radius:12px; border:1px solid rgba(26,143,122,0.2);">
+        <p style="font-size:0.88rem; color:var(--teal); font-weight:600; margin-bottom:0.3rem;">📚 Sources & References</p>
+        <p style="font-size:0.83rem; color:var(--text-mid); line-height:1.6;">WHO Global Data on Visual Impairment · Brien Holden Vision Institute · American Optometric Association · Ophthalmology Journal · The Lancet Ophthalmology</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">Clear<span>Sight</span></div>
+    <p style="margin-top:0.5rem;">Created By Nikhil Dereddy.</p>
+  </div>
+  <ul class="footer-links">
+    <li><a href="#what">What is Myopia</a></li>
+    <li><a href="#prevention">Prevention</a></li>
+    <li><a href="#treatment">Treatment</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <p>© 2025 ClearSight Project · For educational purposes only · Not medical advice</p>
+</footer>
+
+<script>
+  // Smooth nav active state
+  const sections = document.querySelectorAll('section[id], div[id]');
+  const links = document.querySelectorAll('.nav-links a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.style.color = '');
+        const link = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+        if (link) link.style.color = 'var(--teal)';
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(s => observer.observe(s));
+
+  // Animate elements on scroll
+  const animEls = document.querySelectorAll('.what-card, .cause-card, .tip-card, .action-card, .symptom-row, .tl-item');
+  const animObs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+        animObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  animEls.forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    animObs.observe(el);
+  });
+</script>
+</body>
+</html>
